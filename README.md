@@ -2,7 +2,26 @@
 
 ## Overview
 
-The goal of this assignment is to implement a **command-line tool** (CLI) in Go that can filter entries from a **JSON array of objects** based on user-provided criteria. You are free to structure your code in a way that best demonstrates your software engineering skills, focusing on clarity, maintainability, and testability.&#x20;
+The goal of this assignment is to implement a **command-line tool** (CLI) in Go that can filter entries from a **JSON array of objects** based on user-provided criteria. You are free to structure your code in a way that best demonstrates your software engineering skills, focusing on clarity, maintainability, and testability.
+
+- [CLI Filter Tool – Coding Assignment](#cli-filter-tool--coding-assignment)
+  - [Overview](#overview)
+  - [Description](#description)
+    - [Example](#example)
+  - [Requirements](#requirements)
+    - [Project Structure](#project-structure)
+    - [Input](#input)
+    - [Filtering Logic](#filtering-logic)
+    - [Output](#output)
+    - [Testing](#testing)
+    - [Documentation](#documentation)
+    - [Deliverables](#deliverables)
+    - [Implementation Notes](#implementation-notes)
+  - [Example Commands](#example-commands)
+    - [Single Filter](#single-filter)
+    - [Multiple Filters](#multiple-filters)
+    - [Using a File Input](#using-a-file-input)
+  - [Submission](#submission)
 
 ## Description
 
@@ -44,87 +63,101 @@ In this scenario, the CLI would parse the array, filter out objects that **do no
 
 ## Requirements
 
-1. **Project Structure**: Organize the code into meaningful packages or directories that reflect separation of concerns (e.g., a package or module for parsing input, a package for filter logic, and so on).
-2. **Input**:
-   - The CLI **must** support reading JSON from either:
-     - Standard input (stdin), or
-     - A file specified by a flag like `--input-file`.
-   - You only need to handle valid JSON arrays of objects. You can assume the data comes in the correct format.
-3. **Filtering Logic**:
-   - Users can specify one or more filters via command-line flags (e.g., `--filter "<expression>"`).
-   - **Examples** of valid expressions:
-     - `"price<10"`
-     - `"category=book"`
-     - `"id>3"`
-   - The CLI should parse these expressions, apply them to each object in the JSON array, and only **keep** objects that match **all** provided filter expressions.
-   - You only need to handle comparisons of the form **`=`**, **`<`**, **`>`**, **`<=`**, **`>=`**, and **`!=`**.
-   - Assume filters only apply to top-level fields (no nested objects) and that these fields can be:
-     - **Numbers**: interpret them as float or int.
-     - **Strings**: interpret them as case-sensitive string comparisons.
-4. **Output**:
-   - The CLI prints the filtered JSON array to **standard output** in a valid JSON format.
-   - If no objects match the filters, the output should be an empty array `[]`.
-5. **Testing**:
-   - Include **unit tests** for:
-     - Filter parsing
-     - Filtering logic for various operators
-   - Consider adding **integration tests** or acceptance tests for the CLI if time permits.
-6. **Documentation**:
-   - This `README.md` (the one you’re creating) should contain a clear description of how the tool works, including:
-     - **Installation** instructions
-     - **Usage** examples
-     - Any known **limitations** or edge cases
-   - Include in-code documentation (GoDoc comments) for any public functions or types.
-7. **Deliverables**:
-   - A GitHub repository (or link to your solution) containing:
-     1. The source code for the CLI tool.
-     2. A `go.mod` file (if you are using Go modules).
-     3. A suite of tests demonstrating coverage of the filter logic.
-     4. This `README.md` file.
-8. **Implementation Notes**:
-   - We value **clarity**, **maintainability**, and **testability** over the sheer number of features.
-   - You can use standard libraries or any open-source libraries that simplify parsing or argument handling.
-   - Keep the code as minimal as possible while meeting the requirements and best practices.
+### Project Structure
+Organize the code into meaningful packages or directories that reflect separation of concerns and your own preferences.
+
+### Input
+- The CLI **must** support reading JSON from either:
+  - Standard input (stdin), or
+  - A file specified by a flag like `--input-file`.
+- You only need to handle valid JSON arrays of objects. Fail fast if the input is not a valid JSON array.
+
+### Filtering Logic
+- Users can specify one or more filters via command-line flags (e.g., `--filter "<expression>"`).
+- **Examples** of valid expressions:
+  - `"price<10"`
+  - `"category=book"`
+  - `"id>3"`
+- The CLI should parse these expressions, apply them to each object in the JSON array, and only **keep** objects that match **all** provided filter expressions.
+- You only need to handle comparisons of the form **`=`**, **`<`**, **`>`**, **`<=`**, **`>=`**, and **`!=`**.
+- Assume filters only apply to top-level fields (no nested objects) and that these fields can be:
+  - **Numbers**: interpret them as float or int.
+  - **Strings**: interpret them as case-sensitive string comparisons.
+
+### Output
+- The CLI prints the filtered JSON array to **standard output** in a valid JSON format.
+- If no objects match the filters, the output should be an empty array `[]`.
+
+### Testing
+- Include **unit tests** for:
+  - Filter parsing
+  - Filtering logic for various operators
+- Consider adding **integration tests** or acceptance tests for the CLI if time permits
+
+### Documentation
+- This `README.md` (the one you're creating) should contain a clear description of how the tool works, including:
+  - **Installation** instructions
+  - **Usage** examples
+  - Any known **limitations** or edge cases
+- Include in-code documentation (GoDoc comments) for any public functions or types
+- Create a `CONTRIBUTING.md` file that outlines the process for contributing to the project
+
+### Deliverables
+A GitHub repository containing:
+
+1. The source code for the CLI tool and any supporting files
+2. This `README.md` file
+3. A `CONTRIBUTING.md` file that outlines the process for contributing to the project
+
+### Implementation Notes
+- Prefer **clarity**, **maintainability**, and **testability** over the sheer number of features.
+- You can use standard libraries or any open-source libraries that simplify parsing or argument handling
+- Keep the code as minimal as possible while meeting the requirements and best practices
 
 ## Example Commands
 
 Below are some example commands and their expected outputs.
 
-1. **Single Filter**
+### Single Filter
 
-   ```bash
-   echo '[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]' | myfiltercli --filter "id=1"
-   ```
+```bash
+echo '[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]' | myfiltercli --filter "id=1"
+```
 
-   **Output**:
+**Output**:
 
-   ```json
-   [
-     {"id":1,"name":"Alice"}
-   ]
-   ```
+```json
+[
+  {"id":1,"name":"Alice"}
+]
+```
 
-2. **Multiple Filters**
+### Multiple Filters
 
-   ```bash
-   echo '[{"price":10,"type":"shirt"},{"price":20,"type":"shirt"},{"price":10,"type":"pants"}]' | myfiltercli --filter "type=shirt" --filter "price<15"
-   ```
+```bash
+echo '[{"price":10,"type":"shirt"},{"price":20,"type":"shirt"},{"price":10,"type":"pants"}]' | myfiltercli --filter "type=shirt" --filter "price<15"
+```
 
-   **Output**:
+**Output**:
 
-   ```json
-   [
-     {"price":10,"type":"shirt"}
-   ]
-   ```
+```json
+[
+  {"price":10,"type":"shirt"}
+]
+```
 
-3. **Using a File Input**
+### Using a File Input
 
-   ```bash
-   myfiltercli --input-file data.json --filter "category=book"
-   ```
+```bash
+myfiltercli --input-file data.json --filter "category=book"
+```
 
-   **Output** (only items in `data.json` whose `category` is `book`).
+**Output** (only items in `data.json` whose `category` is `book`).
 
+## Submission
 
-
+1. Create a [private fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) of this repository.
+2. Commit your code to the forked repository's `dev` branch
+3. Create a pull request from your `dev` branch to the `main` branch in your private fork
+4. Invite [@abhisek](https://github.com/abhisek) to your private fork repository
+5. Add `@abhisek` as a reviewer to the pull request
